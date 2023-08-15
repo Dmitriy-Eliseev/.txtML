@@ -1,6 +1,3 @@
-//
-// Created by Дмитрий on 13.08.2023.
-//
 
 #ifndef TXTML_TAGS_LIB_H
 #define TXTML_TAGS_LIB_H
