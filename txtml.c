@@ -13,6 +13,7 @@ void print_logo()
 
 int main(int argc, char* argv[]) {
     print_logo();
+    printf(".txtML translation system v1.0\nCopyright (C) 2023 Dmitriy Eliseev\n\n");
     char source_file_extension[] = ".tml";
     char result_file_extension[] = ".txt";
     char** files = get_files_in_dir(".", source_file_extension);
@@ -23,7 +24,6 @@ int main(int argc, char* argv[]) {
     }
     uint16_t i;
 
-    printf("\n.txtML translation system v1.0\nCopyright (C) 2023 Dmitriy Eliseev\n\n");
     for (i = 0; i < files_count; i++) {
         printf("processing file: %s\n", files[i]);
         char* file_content = get_file_content(files[i]);
