@@ -22,8 +22,6 @@ int main(int argc, char* argv[]) {
         exit(EXIT_SUCCESS);
     }
     uint16_t i;
-    //char source[] = "<h1>Время: <datetime></h1>\n<right><calc s>12^5</calc></right>\n<doc_width 40><sep 1>\n";
-    //write_to_file("test.tml", source);
 
     printf(".txtML translation system v1.0\nCopyright (C) 2023 Dmitriy Eliseev\n\n");
     for (i = 0; i < files_count; i++) {
