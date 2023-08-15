@@ -12,14 +12,17 @@ void exit_on_error(char* msg, void* ptr)
         exit(EXIT_FAILURE);
     }
 }
+
 void is_memory_allocated(void* mem_ptr)
 {
     exit_on_error("Memory allocation error\n", mem_ptr);
 }
+
 void is_directory_opened(void* dir_ptr)
 {
     exit_on_error("Error opening directory\n", dir_ptr);
 }
+
 void print_file_error(char* filename)
 {
     printf("  Error opening file \"%s\"\n", filename);
@@ -38,7 +41,7 @@ uint16_t get_files_count(char* dirname, char* file_extension)
 {
     DIR *dir = opendir(dirname);
     is_directory_opened(dir);
-    //if (dir == NULL) {printf("Error opening directory\n"); return 1;}
+
     struct dirent *file;
     uint16_t i = 0;
     while ((file = readdir(dir)) != NULL) {
@@ -55,7 +58,7 @@ char** get_files_in_dir(char* dirname, char* file_extension)
     struct dirent *file;
     DIR *dir = opendir(dirname);
     is_directory_opened(dir);
-    //if (dir == NULL) {printf("Error opening directory\n"); return NULL;}
+
     char** file_names = calloc(files_count, sizeof(char*));
     is_memory_allocated(file_names);
     uint16_t i = 0;
@@ -486,10 +489,10 @@ char* rm_spaces_start_end(char* str)
 void set_doc_width(uint8_t width)
 {
     if (width < 10) {
-        printf("  Error: Document width cannot be less than 10 characters");
+        printf("  Error: Document width cannot be less than 10 characters\n");
         DOC_WIDTH = 10;
     } else if (width > 200) {
-        printf("  Error: Document width cannot be more than 250 characters");
+        printf("  Error: Document width cannot be more than 250 characters\n");
         DOC_WIDTH = 250;
     } else {
         DOC_WIDTH = width;

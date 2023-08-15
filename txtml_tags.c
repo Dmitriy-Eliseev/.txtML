@@ -47,6 +47,7 @@ char* right(char* str, char** attrs)
     free(t);
     return result;
 }
+
 char* center(char* str, char** attrs)
 {
     return get_aligned_text(str, NULL);
@@ -60,14 +61,17 @@ char* h1(char* str, char** attrs)
 {
     return header(str, 1, attrs);
 }
+
 char* h2(char* str, char** attrs)
 {
     return header(str, 2, attrs);
 }
+
 char* h3(char* str, char** attrs)
 {
     return header(str, 3, attrs);
 }
+
 char* h4(char* str, char** attrs)
 {
     char* h = calloc(strlen(str) * 2 + 2, sizeof(char));
@@ -416,7 +420,11 @@ char* insert(char* str, char** attrs)
         for (uint16_t i = 0; i < files_count; i++) {
             if (attrs[i] != NULL) {
                 file_contents[i] = get_file_content(attrs[i]);
-                if (file_contents[i] != NULL) ins_len += strlen(file_contents[i]);
+                if (file_contents[i] != NULL) {
+                    change_symbols('<', '\f', file_contents[i]);
+                    change_symbols('>', '\a', file_contents[i]);
+                    ins_len += strlen(file_contents[i]);
+                }
             } else file_contents[i] = NULL;
         }
         ins_len += files_count * 2;

@@ -1,8 +1,6 @@
-#include <stdint.h>
 
 #ifndef TXTML_TAGS_H
 #define TXTML_TAGS_H
-
 
 #include "txtml_tags_lib.h"
 
@@ -36,10 +34,6 @@ char* get_histogram(char* str, char** attrs);
 
 //files
 char* insert(char* str, char** attrs);
-
-
-
-
 
 
 #endif /*TXTML_TAGS_H*/

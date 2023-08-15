@@ -1,6 +1,5 @@
 #include "txtml_tags.h"
 
-
 void print_logo()
 {
     puts("  __            __             __        ");
@@ -11,6 +10,7 @@ void print_logo()
     puts("/\\_\\\\ \\__\\/\\_/\\_\\ \\ \\__\\\\ \\_\\\\ \\_\\ \\____/");
     puts("\\/_/ \\/__/\\//\\/_/  \\/__/ \\/_/ \\/_/\\/___/ ");
 }
+
 int main(int argc, char* argv[]) {
     print_logo();
     char source_file_extension[] = ".tml";
@@ -23,11 +23,14 @@ int main(int argc, char* argv[]) {
     }
     uint16_t i;
 
-    printf(".txtML translation system v1.0\nCopyright (C) 2023 Dmitriy Eliseev\n\n");
+    printf("\n.txtML translation system v1.0\nCopyright (C) 2023 Dmitriy Eliseev\n\n");
     for (i = 0; i < files_count; i++) {
         printf("processing file: %s\n", files[i]);
         char* file_content = get_file_content(files[i]);
         char* result = execute_all_tags(file_content);
+        change_symbols('\f', '<', result);
+        change_symbols('\a', '>', result);
+
         char* result_file = change_file_extension(files[i], result_file_extension);
         write_to_file(result_file, result);
         printf("  done\n");
