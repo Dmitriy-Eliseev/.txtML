@@ -751,7 +751,7 @@ void calc_in_table(char*** table_data, uint16_t rows_count, const uint16_t* cell
 {
     for (uint16_t i = 0; i < rows_count; i++) {
         for (uint16_t j = 0; j < cells_in_row[i]; j++) {
-            char* tmp = calloc(strlen(table_data[i][j] + 1), sizeof(char));
+            char* tmp = calloc(strlen(table_data[i][j]) + 1, sizeof(char));
             strcpy(tmp, table_data[i][j]);
             change_symbols(',', '.', tmp);
 
