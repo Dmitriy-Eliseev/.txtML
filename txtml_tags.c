@@ -330,7 +330,7 @@ char* get_table(char* str, char** attrs)
     }
     char* result = (nb == 0) ? add_table_border(table) : table;
     //Cleaning
-    free(table);
+    if (nb == 0) free(table);
     for (uint16_t i = 0; i < rows_count; i++) {
         for (uint16_t j = 0; j < cells_in_row[i]; j++) {
             free(table_data[i][j]);
