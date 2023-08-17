@@ -1,2 +1,2 @@
 # .txtML
-Markup Language for .txt files
+Markup Language for .txt files with tag-based syntax
