@@ -798,7 +798,7 @@ void calc_in_table(char*** table_data, uint16_t rows_count, const uint16_t* cell
             if (strcmp(calc_res, "error") != 0) {
                 free(table_data[i][j]);
                 table_data[i][j] = calc_res;
-                free(calc_res);
+                //free(calc_res);
             }
             free(tmp);
         }
