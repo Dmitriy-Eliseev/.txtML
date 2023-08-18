@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
         exit(EXIT_SUCCESS);
     }
     uint16_t i;
-
+    
     for (i = 0; i < files_count; i++) {
         printf("processing file: %s\n", files[i]);
         char* file_content = get_file_content(files[i]);

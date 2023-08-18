@@ -136,7 +136,9 @@ char* p(char* str, char** attrs)
             strcat(pr, "  ");
         }
         strcat(pr, "\n");
+        free(lines[i]);
     }
+    free(lines);
     strcat(pr, "\n");
     return pr;
 }
@@ -159,13 +161,18 @@ char* get_framed_text(char* str, char** attrs)
     set_doc_width(max_line + 2);
     char* tmp_str = center(str, NULL);
     lines = split('\n', tmp_str);
+    free(tmp_str);
+    tmp_str = get_str_from_sym('=', max_line);
     strcat(framed_text, " .+-");
-    strcat(framed_text, get_str_from_sym('=', max_line));
+    strcat(framed_text, tmp_str);
     strcat(framed_text, "-+. \n");
+    char* al = NULL;
     for (uint16_t i = 0; i < lines_count; i++) {
         strcat(framed_text, " ||");
         strcat(framed_text, lines[i]);
-        strcat(framed_text, get_str_from_sym(' ', DOC_WIDTH - strlen(lines[i])));
+        al = get_str_from_sym(' ', DOC_WIDTH - strlen(lines[i]));
+        strcat(framed_text, al);
+        free(al);
         strcat(framed_text, "|| \n");
         free(lines[i]);
     }
@@ -173,7 +180,8 @@ char* get_framed_text(char* str, char** attrs)
     free(lines);
 
     strcat(framed_text, " '+-");
-    strcat(framed_text, get_str_from_sym('=', max_line));
+    strcat(framed_text, tmp_str);
+    free(tmp_str);
     strcat(framed_text, "-+' ");
     return framed_text;
 }
