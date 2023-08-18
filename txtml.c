@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
         char* result_file = change_file_extension(files[i], result_file_extension);
         write_to_file(result_file, result);
         printf("  done\n");
+        free(result_file);
         free(file_content);
         free(result);
         free(files[i]);
