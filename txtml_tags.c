@@ -27,7 +27,7 @@ char* get_datetime(char* str, char** attrs)
 {
     char* date = get_date(NULL, NULL);
     char* t = get_time(NULL, NULL);
-    char* datetime = calloc(strlen(date) + strlen(t) + 2, sizeof(char));
+    char* datetime = calloc(strlen(date) + strlen(t) + 3, sizeof(char));
     is_memory_allocated(datetime);
     sprintf(datetime, "%s  %s", date, t);
     free(t);
@@ -386,7 +386,7 @@ char* get_histogram(char* str, char** attrs)
             sprintf(tmp, " %s%s | ", al, names[i]);
             free(al);
             double v = 0;
-            char* tmp2 = calloc(strlen(values[i]) + 4, sizeof(char));
+            char* tmp2 = calloc(strlen(values[i]) + 5, sizeof(char));
             sprintf(tmp2, " | %s ", values[i]);
             if (is_num(values[i]) == 1) v = strtod(values[i], NULL);
             uint16_t hist_len = (uint16_t)round(v / (double)hist_sym);
@@ -435,7 +435,7 @@ char* insert(char* str, char** attrs)
                 }
             } else file_contents[i] = NULL;
         }
-        ins_len += files_count * 2;
+        ins_len += files_count * 3;
         inserting_text = calloc(ins_len, sizeof(char));
         is_memory_allocated(inserting_text);
         strcat(inserting_text, "\n");
