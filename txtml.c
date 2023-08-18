@@ -35,7 +35,10 @@ int main(int argc, char* argv[]) {
         write_to_file(result_file, result);
         printf("  done\n");
         free(file_content);
+        free(result);
+        free(files[i]);
     }
+    free(files);
 
     return 0;
 }
