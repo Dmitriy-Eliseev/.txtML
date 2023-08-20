@@ -29,7 +29,7 @@ char* get_datetime(char* str, char** attrs)
     char* t = get_time(NULL, NULL);
     char* datetime = calloc(strlen(date) + strlen(t) + 3, sizeof(char));
     is_memory_allocated(datetime);
-    sprintf(datetime, "%s  %s", date, t);
+    sprintf(datetime, "%s %s", date, t);
     free(t);
     free(date);
     return datetime;
