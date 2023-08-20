@@ -81,6 +81,9 @@ uint16_t* get_rows_len(char*** table_data, uint16_t rows_count, const uint16_t* 
 char* get_table_border(const char* row1, const char* row2);
 char* add_table_border(char* table_str);
 void calc_in_table(char*** table_data, uint16_t rows_count, const uint16_t* cells_in_row);
+uint16_t** get_column_width(char*** table_data, uint16_t rows_count, uint16_t* cells_in_row);
+void align_to_columns(char*** table_data, uint16_t rows_count, uint16_t* cells_in_row, uint8_t na);
+uint16_t get_max_row_len(char*** table_data, uint16_t rows_count, uint16_t* cells_in_row);
 
 //histograms
 double get_max_value(char** values, uint16_t values_count);

@@ -805,6 +805,75 @@ void calc_in_table(char*** table_data, uint16_t rows_count, const uint16_t* cell
     }
 }
 
+uint16_t** get_column_width(char*** table_data, uint16_t rows_count, uint16_t* cells_in_row)
+{
+    uint16_t max_cells = get_max(cells_in_row, rows_count);
+    //Memory allocation
+    uint16_t** column_width = calloc(max_cells, sizeof(uint16_t*));
+    is_memory_allocated(column_width);
+    for (uint16_t i = 0; i < max_cells; i++) {
+        column_width[i] = calloc(i + 1, sizeof(uint16_t));
+        is_memory_allocated(column_width[i]);
+    }
+
+    for (uint16_t i = 0; i < rows_count; i++) {
+        for (uint16_t j = 0; j < cells_in_row[i]; j++) {
+            if (strlen(table_data[i][j]) > column_width[cells_in_row[i] - 1][j]) {
+                column_width[cells_in_row[i] - 1][j] = strlen(table_data[i][j]);
+            }
+        }
+    }
+    return column_width;
+}
+
+void align_to_columns(char*** table_data, uint16_t rows_count, uint16_t* cells_in_row, uint8_t na)
+{
+    uint16_t** column_width = get_column_width(table_data, rows_count, cells_in_row);
+    char* align = NULL;
+    char* tmp = NULL;
+    for (uint16_t i = 0; i < rows_count; i++) {
+        for (uint16_t j = 0; j < cells_in_row[i]; j++) {
+            uint16_t al_len = column_width[cells_in_row[i] - 1][j] - strlen(table_data[i][j]);
+            if (al_len > 0) {
+                align = get_str_from_sym(' ', al_len);
+                tmp = strdup(table_data[i][j]);
+                free(table_data[i][j]);
+                table_data[i][j] = calloc(al_len + strlen(tmp) + 1, sizeof(char));
+                if (is_number(tmp) && na == 0) {
+                    sprintf(table_data[i][j], "%s%s", align, tmp);
+                } else {
+                    sprintf(table_data[i][j], "%s%s", tmp, align);
+                }
+                free(tmp);
+                free(align);
+            }
+        }
+    }
+    //Cleaning
+    uint16_t max_cells = get_max(cells_in_row, rows_count);
+    for (uint16_t i = 0; i < max_cells; i++) free(column_width[i]);
+    free(column_width);
+}
+
+uint16_t get_max_row_len(char*** table_data, uint16_t rows_count, uint16_t* cells_in_row)
+{
+    uint16_t max_row_len = 0;
+    uint16_t max_cells = get_max(cells_in_row, rows_count);
+    uint16_t** column_width = get_column_width(table_data, rows_count, cells_in_row);
+    for (uint16_t i = 0; i < max_cells; i++) {
+        uint16_t row_len = 0;
+        for (uint16_t j = 0; j <= i; j++) {
+            row_len += column_width[i][j];
+        }
+        row_len += i;
+        if (row_len > max_row_len) max_row_len = row_len;
+    }
+    //Cleaning
+    for (uint16_t i = 0; i < max_cells; i++) free(column_width[i]);
+    free(column_width);
+    return max_row_len;
+}
+
 
 /***************************************************************************
 * functions for working with Histograms

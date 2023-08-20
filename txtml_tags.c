@@ -299,9 +299,10 @@ char* get_table(char* str, char** attrs)
     uint8_t na = in_str_array(attrs, "na");//don't align numbers to the right
     if (nb == 1) na = 1;
     if (nc == 0) calc_in_table(table_data, rows_count, cells_in_row);
+    align_to_columns(table_data, rows_count, cells_in_row, na);
     uint16_t* rows_len     = get_rows_len(table_data, rows_count, cells_in_row);
-    uint16_t  max_row_len  = get_max(rows_len, rows_count);
-    if (max_row_len < DOC_WIDTH) max_row_len = DOC_WIDTH - 2;
+    uint16_t  max_row_len  = get_max_row_len(table_data, rows_count, cells_in_row);
+    if (max_row_len < DOC_WIDTH - 2) max_row_len = DOC_WIDTH - 2;
     char*     table        = calloc(rows_count * (max_row_len + 3) + 1, sizeof(char));
     is_memory_allocated(table);
     for (uint16_t i = 0; i < rows_count; i++) {
