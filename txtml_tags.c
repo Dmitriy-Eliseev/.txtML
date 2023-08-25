@@ -208,9 +208,7 @@ char* get_list(char* str, char** attrs)
             strcat(mrk_str, al);
             free(al);
         } else {
-            strcat(mrk_str, " ");
-            strcat(mrk_str, get_str_from_sym(attrs[0][0], 1));
-            strcat(mrk_str, " ");
+            sprintf(mrk_str, " %c ", attrs[0][0]);
         }
         strcat(lst, mrk_str);
         free(mrk_str);

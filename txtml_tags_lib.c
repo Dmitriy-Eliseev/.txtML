@@ -30,7 +30,9 @@ void print_file_error(char* filename)
 
 void print_tag_error(char* tag)
 {
-    printf("  Error: invalid tag \"%s\". Ignoring\n", get_tag_name(tag));
+    char* tag_name = get_tag_name(tag);
+    printf("  Error: invalid tag \"%s\". Ignoring\n", tag_name);
+    free(tag_name);
 }
 
 
@@ -179,7 +181,7 @@ int8_t is_valid_tag(char* tag)
             return i;
         }
     }
-    free(tag_name);
+    //free(tag_name);
     return -1;
 }
 
@@ -206,22 +208,27 @@ char* get_open_tag(char* tag)
 
 char* get_close_tag(char* tag)
 {
-    if (is_single_tag(tag) == 0) {
+    char* t_tag = strdup(tag);
+    t_tag = rm_spaces_start_end(t_tag);
+
+    if (is_single_tag(t_tag) == 0) {
         char* close_tag = NULL;
         int8_t attr = have_attributes(tag);
         if (attr == 0) {
             close_tag = (char *) calloc(strlen(tag) + 4,  sizeof(char));
             is_memory_allocated(close_tag);
-            sprintf(close_tag, "</%s>", tag);
+            sprintf(close_tag, "</%s>", t_tag);
         } else if (attr > 1) {
-            char* tag_name = get_tag_name(tag);
+            char* tag_name = get_tag_name(t_tag);
             close_tag = (char *) calloc(strlen(tag_name) + 4,  sizeof(char));
             is_memory_allocated(close_tag);
             sprintf(close_tag, "</%s>", tag_name);
             free(tag_name);
         }
+        free(t_tag);
         return close_tag;
     }
+    free(t_tag);
     return get_open_tag(tag);
 }
 
@@ -257,7 +264,7 @@ char* get_tag_content(char* str, char* tag)
     char* open_tag = get_open_tag(tag);
     char* close_tag = get_close_tag(tag);
     char *start = strstr(str, open_tag) +
-                  sizeof(char) * strlen(get_open_tag(tag));
+                  sizeof(char) * strlen(open_tag);
     char *end = strstr(str, close_tag);
     free(open_tag);
     free(close_tag);
@@ -286,11 +293,13 @@ char* get_tag_content(char* str, char* tag)
 
 char* get_text_before_tag(char* str, char* tag)
 {
-    char* start_tag = strstr(str, get_open_tag(tag));
+    char* open_tag = get_open_tag(tag);
+    char* start_tag = strstr(str, open_tag);
     char* text_before_tag = (char*)calloc(start_tag - &str[0] + 1, sizeof(char));
     is_memory_allocated(text_before_tag);
     memcpy(text_before_tag, &str[0], start_tag - &str[0]);
     text_before_tag[start_tag - &str[0]] = '\0';
+    free(open_tag);
     return text_before_tag;
 }
 
@@ -318,18 +327,22 @@ char* get_text_after_tag(char* str, char* tag)
 
 char* execute_tag(char* tag, char* tag_content)
 {
-    int8_t tag_i = is_valid_tag(tag);
+    char* t_tag = strdup(tag);
+    t_tag = rm_spaces_start_end(t_tag);
+    int8_t tag_i = is_valid_tag(t_tag);
     
     if (tag_i != -1 && strcmp(tag_content, " ") != 0) {
-        char** attr = get_tag_attributes(tag);
+        char** attr = get_tag_attributes(t_tag);
         char* tag_result = (*tag_functions[tag_i])(tag_content, attr);
         for (uint16_t i = 0; i < have_attributes(tag) - 1; i++) {
             if (attr[i] != NULL) free(attr[i]);
             else break;
         }
+        free(t_tag);
         free(attr);
         return tag_result;
     }
+    free(t_tag);
     return tag_content;
 }
 
@@ -337,16 +350,17 @@ char* execute_nested_tags(char* str)
 {
     char* tag = get_tag(str);
     if (tag != NULL) {
+        char* t_tag = strdup(tag);
+        t_tag = rm_spaces_start_end(t_tag);
+
         char* tag_content = get_tag_content(str, tag);
         char* res = execute_nested_tags(tag_content);
 
-        //free(tag_content);
         char* text_before_tag = get_text_before_tag(str, tag);
-        char* text_after_tag = get_text_after_tag(str, tag);
+        char* text_after_tag = get_text_after_tag(str, t_tag);
 
         char* result = NULL;
         char* tag_result = execute_tag(tag, res);
-        free(res);
         uint32_t len = strlen(text_before_tag) + strlen(tag_result) + strlen(text_after_tag) + 1;
         result = (char*)calloc(len,  sizeof(char));
         is_memory_allocated(result);
@@ -354,6 +368,11 @@ char* execute_nested_tags(char* str)
         free(text_before_tag);
         free(tag_result);
         free(text_after_tag);
+        free(t_tag);
+
+        free(tag_content);
+        //free(res);
+        free(tag);
         return result;
     }
     free(tag);
@@ -899,6 +918,7 @@ void get_histogram_data(char* str, char** names, char** values)
         char* name = NULL;
         char* value = NULL;
         if (get_elements_count('|', lines[i]) >= 2) {
+            
             char** t = split('|', lines[i]);
             name = calloc(strlen(t[0]) + 1, sizeof(char));
             is_memory_allocated(name);
@@ -915,6 +935,9 @@ void get_histogram_data(char* str, char** names, char** values)
                 is_memory_allocated(value);
                 strcpy(value, "error");
             }
+            //uint16_t t_count = get_elements_count('|', lines[i]);
+            //for (uint16_t j = 0; j < t_count; j++) free(t[i]);
+            free(t);
         } else if (get_elements_count('|', lines[i]) == 1) {
             name = calloc(2, sizeof(char));
             is_memory_allocated(name);
