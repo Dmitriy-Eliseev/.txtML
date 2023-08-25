@@ -268,10 +268,14 @@ char* get_tag_content(char* str, char* tag)
     char *end = strstr(str, close_tag);
     free(open_tag);
     free(close_tag);
-    if (end == NULL) {
+    if (end == NULL || end - start == 0) {
         tag_content = (char *)  calloc(3,  sizeof(char));
         is_memory_allocated(tag_content);
-        strcpy(tag_content, " ");
+        if (end - start == 0) {
+            strcpy(tag_content, "\v");
+        } else {
+            strcpy(tag_content, "\r");
+        }
         return tag_content;
     }
     tag_content = (char *) calloc(end - start + 1, sizeof(char));
@@ -331,7 +335,7 @@ char* execute_tag(char* tag, char* tag_content)
     t_tag = rm_spaces_start_end(t_tag);
     int8_t tag_i = is_valid_tag(t_tag);
     
-    if (tag_i != -1 && strcmp(tag_content, " ") != 0) {
+    if (tag_i != -1 && strcmp(tag_content, "\r") != 0) {
         char** attr = get_tag_attributes(t_tag);
         char* tag_result = (*tag_functions[tag_i])(tag_content, attr);
         for (uint16_t i = 0; i < have_attributes(tag) - 1; i++) {

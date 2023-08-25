@@ -30,7 +30,8 @@ int main(int argc, char* argv[]) {
         char* result = execute_all_tags(file_content);
         change_symbols('\f', '<', result);
         change_symbols('\a', '>', result);
-
+        change_symbols('\r', ' ', result);
+        change_symbols('\v', ' ', result);
         char* result_file = change_file_extension(files[i], result_file_extension);
         write_to_file(result_file, result);
         printf("  done\n");
