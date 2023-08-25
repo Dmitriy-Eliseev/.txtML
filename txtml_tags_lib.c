@@ -271,9 +271,10 @@ char* get_tag_content(char* str, char* tag)
     if (end == NULL || end - start == 0) {
         tag_content = (char *)  calloc(3,  sizeof(char));
         is_memory_allocated(tag_content);
-        if (end - start == 0) {
+        if (end != NULL && end - start == 0) {
             strcpy(tag_content, "\v");
-        } else {
+        } 
+        if (end == NULL) {
             strcpy(tag_content, "\r");
         }
         return tag_content;
@@ -314,6 +315,7 @@ char* get_text_after_tag(char* str, char* tag)
     if (end_tag == NULL) {
         if (is_valid_tag(tag) != -1) {
             printf("  Error: no closing tag found for \"%s\". Ignoring\n", tag);
+            //exit(EXIT_SUCCESS);
         } else print_tag_error(tag);
         free(close_tag);
         close_tag = get_open_tag(tag);
@@ -370,7 +372,7 @@ char* execute_nested_tags(char* str)
         is_memory_allocated(result);
         sprintf(result, "%s%s%s", text_before_tag, tag_result, text_after_tag);
         free(text_before_tag);
-        free(tag_result);
+        //free(tag_result);
         free(text_after_tag);
         free(t_tag);
 
