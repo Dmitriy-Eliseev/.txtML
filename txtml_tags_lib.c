@@ -210,42 +210,33 @@ char* get_close_tag(char* tag)
 {
     char* t_tag = strdup(tag);
     t_tag = rm_spaces_start_end(t_tag);
-
     if (is_single_tag(t_tag) == 0) {
         char* close_tag = NULL;
-        int8_t attr = have_attributes(tag);
-        if (attr == 0) {
-            close_tag = (char *) calloc(strlen(tag) + 4,  sizeof(char));
-            is_memory_allocated(close_tag);
-            sprintf(close_tag, "</%s>", t_tag);
-        } else if (attr > 1) {
-            char* tag_name = get_tag_name(t_tag);
-            close_tag = (char *) calloc(strlen(tag_name) + 4,  sizeof(char));
-            is_memory_allocated(close_tag);
-            sprintf(close_tag, "</%s>", tag_name);
-            free(tag_name);
-        }
-        free(t_tag);
+        char* tag_name = get_tag_name(t_tag);
+        close_tag = (char*) calloc(strlen(tag_name) + 4,  sizeof(char));
+        is_memory_allocated(close_tag);
+        sprintf(close_tag, "</%s>", tag_name);
+        free(tag_name);
+        //free(t_tag);
         return close_tag;
+    } else {
+        free(t_tag);
+        return get_open_tag(tag);
     }
-    free(t_tag);
-    return get_open_tag(tag);
 }
 
 char* get_tag(const char* str)
 {
     if (str == NULL) return NULL;
     char* tag = NULL;
-    int start = 0, end = 0;
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '<') start = i + 1;
-        if (str[i] == '>') { end = i; break; }
-    }
+    char* start = strchr(str, '<') + 1;
+    char* end = strchr(str, '>');
+    if (start == NULL || end == NULL) return NULL;
     if (end > start) {
-        if (str[start] != '/') {
+        if (*start != '/') {
             tag = (char*)calloc(end - start + 1,  sizeof(char));
             is_memory_allocated(tag);
-            for (int i = 0; i < end - start; i++) tag[i] = str[start + i];
+            memcpy(tag, start, end - start);
             tag[end - start] = '\0';
         }
     }
@@ -258,7 +249,7 @@ char* get_tag_content(char* str, char* tag)
     if (is_single_tag(tag) != 0) {
         tag_content = (char *) calloc(3,  sizeof(char));
         is_memory_allocated(tag_content);
-        strcpy(tag_content, "-");
+        strcpy(tag_content, " ");
         return tag_content;
     }
     char* open_tag = get_open_tag(tag);
@@ -315,7 +306,6 @@ char* get_text_after_tag(char* str, char* tag)
     if (end_tag == NULL) {
         if (is_valid_tag(tag) != -1) {
             printf("  Error: no closing tag found for \"%s\". Ignoring\n", tag);
-            //exit(EXIT_SUCCESS);
         } else print_tag_error(tag);
         free(close_tag);
         close_tag = get_open_tag(tag);
@@ -372,12 +362,11 @@ char* execute_nested_tags(char* str)
         is_memory_allocated(result);
         sprintf(result, "%s%s%s", text_before_tag, tag_result, text_after_tag);
         free(text_before_tag);
-        //free(tag_result);
+        free(tag_result);
         free(text_after_tag);
         free(t_tag);
-
-        free(tag_content);
-        //free(res);
+        if (tag_content != tag_result) free(tag_content);
+        if (res != tag_content) free(res);
         free(tag);
         return result;
     }
@@ -449,8 +438,7 @@ char* get_str_from_sym(char sym, uint16_t count)
     is_memory_allocated(str);
     char* symbol = calloc(2, sizeof(char));
     is_memory_allocated(symbol);
-    symbol[0] = sym;
-    symbol[1] = '\0';
+    sprintf(symbol, "%c", sym);
     for (uint16_t i = 0; i < count; i++) {
         strcat(str, symbol);
     }
@@ -955,7 +943,6 @@ void get_histogram_data(char* str, char** names, char** values)
                 value = calloc(strlen(lines[i]) + 1, sizeof(char));
                 is_memory_allocated(value);
                 strcpy(value, lines[i]);
-                //value = rm_spaces_from_str(value);
             } else {
                 value = calloc(6, sizeof(char));
                 is_memory_allocated(value);
@@ -964,7 +951,6 @@ void get_histogram_data(char* str, char** names, char** values)
         }
 
         if (strcmp(name, " ") != 0) name = rm_spaces_start_end(name);
-        //if (strcmp(value, " ") != 0) value = rm_spaces_from_str(value);
         value = rm_spaces_from_str(value);
         names[i] = calloc(strlen(name) + 1, sizeof(char));
         is_memory_allocated(names[i]);
