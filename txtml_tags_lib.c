@@ -147,6 +147,7 @@ char** get_tag_attributes(char* tag)
         attrs = (char**)calloc(have_attributes(tag),  sizeof(char*));
         is_memory_allocated(attrs);
         char** tag_attr = split(' ', tag);
+        free(tag_attr[0]);
         for (uint16_t i = 1; i < have_attributes(tag); i++) {
             attrs[i-1] = calloc(strlen(tag_attr[i]) + 1, sizeof(char));
             is_memory_allocated(attrs[i-1]);
@@ -177,11 +178,11 @@ int8_t is_valid_tag(char* tag)
     char* tag_name = get_tag_name(tag);
     for (uint8_t i = 0; i < tag_count; i++) {
         if (strcmp(tag_list[i], tag_name) == 0) {
-            //free(tag_name);
+            if (tag != tag_name) free(tag_name);
             return i;
         }
     }
-    //free(tag_name);
+    if (tag != tag_name) free(tag_name);
     return -1;
 }
 
@@ -190,11 +191,11 @@ int8_t is_single_tag(char* tag)
     char* tag_name = get_tag_name(tag);
     for (uint8_t i = 0; i < single_tags_count; i++) {
         if (strcmp(single_tags[i], tag_name) == 0) {
-            //free(tag_name);
+            if (tag != tag_name) free(tag_name);
             return 1;
         }
     }
-    //free(tag_name);
+    if (tag != tag_name) free(tag_name);
     return 0;
 }
 
@@ -217,7 +218,7 @@ char* get_close_tag(char* tag)
         is_memory_allocated(close_tag);
         sprintf(close_tag, "</%s>", tag_name);
         free(tag_name);
-        //free(t_tag);
+        if (t_tag != tag_name) free(t_tag);
         return close_tag;
     } else {
         free(t_tag);
@@ -379,11 +380,14 @@ char* execute_all_tags(char* str)
     char* result = strdup(str);
     is_memory_allocated(result);
     char* tmp = NULL;
-    while (get_tag(result) != NULL) {
+    char* tag = get_tag(result);
+    while (tag != NULL) {
         tmp = strdup(result);
         free(result);
         result = execute_nested_tags(tmp);
         free(tmp);
+        free(tag);
+        tag = get_tag(result);
     }
     return result;
 }
@@ -810,9 +814,9 @@ void calc_in_table(char*** table_data, uint16_t rows_count, const uint16_t* cell
             calc_res = calc(tmp, NULL);
             if (strcmp(calc_res, "error") != 0) {
                 free(table_data[i][j]);
-                table_data[i][j] = calc_res;
-                //free(calc_res);
+                table_data[i][j] = strdup(calc_res);
             }
+            free(calc_res);
             free(tmp);
         }
     }
@@ -911,15 +915,15 @@ void get_histogram_data(char* str, char** names, char** values)
     for (uint16_t i = 0; i < lines_count; i++) {
         char* name = NULL;
         char* value = NULL;
-        if (get_elements_count('|', lines[i]) >= 2) {
+        uint16_t t_count = get_elements_count('|', lines[i]);
+        if (t_count >= 2) {
             
             char** t = split('|', lines[i]);
-            name = calloc(strlen(t[0]) + 1, sizeof(char));
+            name = strdup(t[0]);
             is_memory_allocated(name);
-            strcpy(name, t[0]);
-            value = calloc(strlen(t[1]) + 1, sizeof(char));
+
+            value = strdup(t[1]);
             is_memory_allocated(value);
-            strcpy(value, t[1]);
 
             if (strcmp(value, " ") != 0) value = rm_spaces_from_str(value);
             change_symbols(',', '.', value);
@@ -929,10 +933,10 @@ void get_histogram_data(char* str, char** names, char** values)
                 is_memory_allocated(value);
                 strcpy(value, "error");
             }
-            //uint16_t t_count = get_elements_count('|', lines[i]);
-            //for (uint16_t j = 0; j < t_count; j++) free(t[i]);
+            
+            for (uint16_t j = 0; j < t_count; j++) free(t[j]);
             free(t);
-        } else if (get_elements_count('|', lines[i]) == 1) {
+        } else if (t_count == 1) {
             name = calloc(2, sizeof(char));
             is_memory_allocated(name);
             strcpy(name, " ");

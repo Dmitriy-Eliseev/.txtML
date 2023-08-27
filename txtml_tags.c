@@ -117,14 +117,15 @@ char* separator(char* str, char** attrs)
 
 char* p(char* str, char** attrs)
 {
+    char* tmp_str = NULL;
     if (attrs != NULL) {
         set_doc_width(DOC_WIDTH - 2);
-        str = right(str, NULL);
+        tmp_str = right(str, NULL);
         set_doc_width(DOC_WIDTH + 2);
-    }
-    char** lines = split('\n', str);
-    uint16_t lines_count = get_elements_count('\n', str);
-    uint32_t len = strlen(str) + lines_count * 2 + 3;
+    } else tmp_str = strdup(str);
+    char** lines = split('\n', tmp_str);
+    uint16_t lines_count = get_elements_count('\n', tmp_str);
+    uint32_t len = strlen(tmp_str) + lines_count * 2 + 3;
     char* pr = calloc(len, sizeof(char));
     is_memory_allocated(p);
     for (uint16_t i = 0; i < lines_count; i++) {
@@ -138,6 +139,7 @@ char* p(char* str, char** attrs)
         strcat(pr, "\n");
         free(lines[i]);
     }
+    free(tmp_str);
     free(lines);
     strcat(pr, "\n");
     return pr;
