@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
     uint16_t i;
     
     for (i = 0; i < files_count; i++) {
+        set_doc_width(DEFAULT_DOC_WIDTH);
         printf("processing file: %s\n", files[i]);
         char* file_content = get_file_content(files[i]);
         char* result = execute_all_tags(file_content);

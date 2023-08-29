@@ -56,6 +56,7 @@ char* rm_spaces_from_str(char* str);
 char* rm_spaces_start_end(char* str);
 
 //text formatting
+extern const uint8_t DEFAULT_DOC_WIDTH;
 extern uint8_t DOC_WIDTH;
 void set_doc_width(uint8_t width);
 

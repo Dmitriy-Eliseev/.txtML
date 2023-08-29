@@ -1,7 +1,7 @@
 #include "txtml_tags_lib.h"
 
-
-uint8_t DOC_WIDTH = 80;
+const uint8_t DEFAULT_DOC_WIDTH = 80;
+uint8_t DOC_WIDTH = DEFAULT_DOC_WIDTH;
 /***************************************************************************
 * functions for working with errors
 ***************************************************************************/
@@ -32,7 +32,7 @@ void print_tag_error(char* tag)
 {
     char* tag_name = get_tag_name(tag);
     printf("  Error: invalid tag \"%s\". Ignoring\n", tag_name);
-    free(tag_name);
+    if (tag_name != tag) free(tag_name);
 }
 
 
@@ -311,7 +311,7 @@ char* get_text_after_tag(char* str, char* tag)
         free(close_tag);
         close_tag = get_open_tag(tag);
         end_tag = strstr(str, close_tag);
-    }
+    } else if (is_valid_tag(tag) == -1) print_tag_error(tag);
     end_tag = end_tag + sizeof(char) * strlen(close_tag);
     free(close_tag);
     char* text_after_tag = (char*)calloc(strlen(str) - (end_tag - &str[0]) + 1, sizeof(char));
