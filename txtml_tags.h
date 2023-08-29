@@ -21,6 +21,7 @@ char* h4(char* str, char** attrs);
 
 //text formatting
 char* doc_width(char* str, char** attrs);
+char* def_width(char* str, char** attrs);
 char* separator(char* str, char** attrs);
 char* p(char* str, char** attrs);
 char* get_framed_text(char* str, char** attrs);

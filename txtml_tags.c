@@ -106,6 +106,14 @@ char* doc_width(char* str, char** attrs)
     return r;
 }
 
+char* def_width(char* str, char** attrs)
+{
+    set_doc_width(DEFAULT_DOC_WIDTH);
+    char* r = calloc(2, sizeof(char));
+    strcpy(r, "");
+    return r;
+}
+
 char* separator(char* str, char** attrs)
 {
     char sep_symbol = '-';

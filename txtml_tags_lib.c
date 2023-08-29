@@ -121,13 +121,13 @@ char* change_file_extension(char* filename, char* extension)
 * functions for working with TAGS
 ***************************************************************************/
 char tag_list[][20] = { "date", "time", "datetime", "right", "center", "h1", "h2", "h3", "h4",
-                        "doc_width", "sep", "p", "frame", "list", "lines", "calc", "table",
+                        "doc_width", "def_width", "sep", "p", "frame", "list", "lines", "calc", "table",
                         "histogram", "insert"};
 const int tag_count = sizeof(tag_list) / sizeof(tag_list[0]);
 char* (*tag_functions[])(char*, char**) = { get_date, get_time, get_datetime, right, center, h1,
-                                            h2, h3, h4, doc_width, separator, p, get_framed_text,
+                                            h2, h3, h4, doc_width, def_width, separator, p, get_framed_text,
                                             get_list, get_lines, calc, get_table, get_histogram, insert };
-char single_tags[][20] = { "date", "time", "datetime", "doc_width", "sep", "lines", "insert" };
+char single_tags[][20] = { "date", "time", "datetime", "doc_width", "def_width", "sep", "lines", "insert" };
 const int single_tags_count = sizeof(single_tags) / sizeof(single_tags[0]);
 
 
